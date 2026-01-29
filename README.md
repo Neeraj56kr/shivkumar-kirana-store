@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Shivkumar Kirana Store 🏪
 
 A complete full-stack web application for a village grocery shop with customer website, customer care system, chatbot, and admin panel.
@@ -241,3 +242,7 @@ For issues or questions, please contact the store admin.
 **Made with ❤️ for Shivkumar Kirana Store**
 
 **Status**: Production Ready ✅
+=======
+# shivkumar-kirana-store
+A full-stack Kirana Store Management System built with Python Flask and PostgreSQL. Features include multi-admin login, secure authentication, product management with images, order management, WhatsApp &amp; UPI integration, chatbot for product availability, and modern responsive UI. Designed for small shops and local businesses.
+>>>>>>> c66a8ec9ff8f8fd85ef9254cb5e40d738b66de27
