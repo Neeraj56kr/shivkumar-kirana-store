@@ -37,6 +37,13 @@ app.config.from_object(Config)
 db.init_app(app)
 migrate = Migrate(app, db)
 
+# Create tables at startup (for production on Render)
+with app.app_context():
+    db.create_all()
+    # Create default settings if not exist
+    from models import _create_default_settings
+    _create_default_settings()
+
 # Ensure upload folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
