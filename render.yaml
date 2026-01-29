@@ -20,9 +20,8 @@ services:
       - key: ADMIN_PASSWORD
         sync: false
 
-  - type: pserv
+  - type: postgres
     name: shivkumar-db
-    env: postgres
     region: oregon
     plan: free
     postgresVersion: "15"
