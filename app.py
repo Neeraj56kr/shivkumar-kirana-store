@@ -41,8 +41,16 @@ migrate = Migrate(app, db)
 with app.app_context():
     db.create_all()
     # Create default settings if not exist
-    from models import _create_default_settings
+    from models import _create_default_settings, get_admin_by_username, add_admin
     _create_default_settings()
+    
+    # Create default admin if not exists
+    admin_username = os.getenv('ADMIN_USERNAME', 'admin')
+    admin_password = os.getenv('ADMIN_PASSWORD')
+    if admin_password and not get_admin_by_username(admin_username):
+        password_hash = generate_password_hash(admin_password)
+        add_admin(admin_username, password_hash, is_master=True)
+        print(f"Master admin created: {admin_username}")
 
 # Ensure upload folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
