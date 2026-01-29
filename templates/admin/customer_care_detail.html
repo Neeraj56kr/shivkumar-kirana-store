@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <a href="{{ url_for('admin_customer_care') }}" class="text-blue-600 hover:text-blue-800 font-semibold mb-6 inline-flex items-center gap-2">← Back to Issues</a>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold">Issue #{{ issue.id }}</h1>
+        <p class="text-sm text-gray-600">{{ issue.created_at.strftime('%d-%m-%Y %H:%M') }}</p>
+        <div class="mt-4">
+            <h3 class="font-semibold">Customer</h3>
+            <p>{{ issue.customer_name }} — {{ issue.mobile }}</p>
+        </div>
+        <div class="mt-4">
+            <h3 class="font-semibold">Items & Total</h3>
+            <pre class="bg-gray-50 p-3 rounded">{{ issue.items }}</pre>
+            <p class="mt-2 font-semibold">Total: ₹{{ issue.total }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

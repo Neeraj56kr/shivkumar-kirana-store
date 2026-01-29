@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width:600px; margin:auto; padding:40px 20px;">
+    <h1 style="text-align:center; margin-bottom:30px; font-size:28px; color:#333;">📨 अपना संदेश ट्रैक करें (Check Your Message)</h1>
+
+    <!-- Search Section -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-200 mb-6">
+        <form method="post" action="" class="space-y-4">
+            <div>
+                <label style="display:block; margin-bottom:8px; font-weight:600; color:#555;">
+                    आपका ईमेल (Your Email)
+                </label>
+                <input type="email" name="email" placeholder="Enter your email" required
+                       value="{{ email or '' }}"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all">
+            </div>
+            
+            <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold rounded-lg hover:opacity-90 transition-all">
+                🔍 खोजें (Search)
+            </button>
+        </form>
+    </div>
+
+    <!-- Messages Display -->
+    {% if messages %}
+        <div class="space-y-4">
+            {% for msg in messages %}
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 {% if msg.admin_reply %}border-green-500{% else %}border-blue-500{% endif %}">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">{{ msg.name }}</h3>
+                            <p class="text-sm text-gray-600">📅 {{ msg.created_at.strftime('%d-%m-%Y %H:%M') }}</p>
+                        </div>
+                        <span class="px-3 py-1 rounded text-xs font-semibold {% if msg.admin_reply %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                            {% if msg.admin_reply %}✅ Replied{% else %}⏳ Pending{% endif %}
+                        </span>
+                    </div>
+
+                    <!-- Your Message -->
+                    <div class="mb-4 pb-4 border-b">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">आपका संदेश (Your Message):</p>
+                        <p class="text-gray-700 leading-relaxed">{{ msg.message }}</p>
+                    </div>
+
+                    <!-- Admin Reply (if exists) -->
+                    {% if msg.admin_reply %}
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <p class="text-sm font-semibold text-green-700 mb-2">✉️ Admin का जवाब (Admin Reply):</p>
+                            <p class="text-gray-800 leading-relaxed">{{ msg.admin_reply }}</p>
+                        </div>
+                    {% else %}
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <p class="text-sm text-blue-700">⏳ आपके संदेश का जवाब शीघ्र ही दिया जाएगा (Your message will be replied to soon)</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% elif email %}
+        <div class="bg-yellow-50 rounded-lg p-6 border border-yellow-200 text-center">
+            <p class="text-yellow-700 font-semibold">❌ कोई संदेश नहीं मिला (No messages found)</p>
+            <p class="text-sm text-yellow-600 mt-2">इस ईमेल से कोई संदेश नहीं है (No messages from this email)</p>
+        </div>
+    {% else %}
+        <div class="bg-blue-50 rounded-lg p-6 border border-blue-200 text-center">
+            <p class="text-blue-700 font-semibold">💡 आपके संदेश की स्थिति देखने के लिए अपना ईमेल दर्ज करें</p>
+            <p class="text-sm text-blue-600 mt-2">(Enter your email to check your message status)</p>
+        </div>
+    {% endif %}
+
+    <hr style="margin:30px 0;">
+
+    <div style="text-align:center;">
+        <p style="color:#666; margin-bottom:10px;">कोई नया संदेश भेजना है? (Want to send a new message?)</p>
+        <a href="{{ url_for('contact') }}" style="display:inline-block; padding:10px 20px; background:linear-gradient(to right, #b45309, #d97706); color:white; text-decoration:none; border-radius:8px; font-weight:600;">
+            📝 संपर्क करें (Contact Us)
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

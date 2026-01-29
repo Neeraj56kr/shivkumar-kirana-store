@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block title %}मेरे ऑर्डर - शिवकुमार किराना स्टोर{% endblock %}
+
+{% block content %}
+<section class="py-8 md:py-12">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <!-- Page Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                📋 मेरे ऑर्डर
+            </h1>
+            <p class="text-gray-600">My Orders - अपने ऑर्डर देखें</p>
+        </div>
+        
+        <!-- Mobile Number Input -->
+        <div id="search-section" class="max-w-md mx-auto mb-8">
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="font-bold text-gray-800 mb-4 text-center">
+                    📱 अपना मोबाइल नंबर डालें
+                </h2>
+                <form id="search-form" class="space-y-4">
+                    <div>
+                        <input type="tel" 
+                               id="mobile-input" 
+                               required
+                               pattern="[0-9]{10}"
+                               placeholder="10 अंकों का मोबाइल नंबर"
+                               class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-lg text-center font-medium tracking-wider">
+                    </div>
+                    <button type="submit" 
+                            id="search-btn"
+                            class="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-lg rounded-xl hover:opacity-90 transition-all btn-press">
+                        🔍 ऑर्डर खोजें
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Orders List -->
+        <div id="orders-section" class="hidden">
+            <!-- User Info Header -->
+            <div id="user-info" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-2xl p-4 mb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl">
+                            👤
+                        </div>
+                        <div>
+                            <p class="font-bold text-lg" id="user-mobile">+91-XXXXXXXXXX</p>
+                            <p class="text-sm opacity-90">कुल <span id="order-count">0</span> ऑर्डर</p>
+                        </div>
+                    </div>
+                    <button onclick="resetSearch()" class="px-4 py-2 bg-white/20 rounded-lg text-sm hover:bg-white/30 transition-all">
+                        🔄 दूसरा नंबर
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Orders Container -->
+            <div id="orders-container" class="space-y-4">
+                <!-- Orders will be loaded here -->
+            </div>
+            
+            <!-- No Orders Message -->
+            <div id="no-orders" class="hidden text-center py-12 bg-white rounded-2xl shadow-md">
+                <div class="text-6xl mb-4">📭</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">कोई ऑर्डर नहीं मिला</h3>
+                <p class="text-gray-600 mb-4">इस नंबर से अभी तक कोई ऑर्डर नहीं हुआ</p>
+                <a href="{{ url_for('products') }}" 
+                   class="inline-block px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-xl hover:opacity-90 transition-all">
+                    🛒 अभी खरीदारी करें
+                </a>
+            </div>
+        </div>
+        
+        <!-- Loading State -->
+        <div id="loading-state" class="hidden text-center py-12">
+            <div class="text-4xl animate-spin mb-4">⏳</div>
+            <p class="text-gray-600">ऑर्डर खोजे जा रहे हैं...</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const searchForm = document.getElementById('search-form');
+    const searchSection = document.getElementById('search-section');
+    const ordersSection = document.getElementById('orders-section');
+    const ordersContainer = document.getElementById('orders-container');
+    const noOrdersDiv = document.getElementById('no-orders');
+    const loadingState = document.getElementById('loading-state');
+    
+    function resetSearch() {
+        searchSection.classList.remove('hidden');
+        ordersSection.classList.add('hidden');
+        document.getElementById('mobile-input').value = '';
+        document.getElementById('mobile-input').focus();
+    }
+    
+    function getStatusBadge(status) {
+        const badges = {
+            'pending': '<span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">⏳ Pending</span>',
+            'confirmed': '<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">✅ Confirmed</span>',
+            'delivered': '<span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">🚚 Delivered</span>',
+            'cancelled': '<span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">❌ Cancelled</span>'
+        };
+        return badges[status] || badges['pending'];
+    }
+    
+    function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        const options = { 
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        return date.toLocaleDateString('hi-IN', options);
+    }
+    
+    function renderOrders(orders, mobile) {
+        document.getElementById('user-mobile').textContent = `+91-${mobile}`;
+        document.getElementById('order-count').textContent = orders.length;
+        
+        if (orders.length === 0) {
+            ordersContainer.classList.add('hidden');
+            noOrdersDiv.classList.remove('hidden');
+            return;
+        }
+        
+        ordersContainer.classList.remove('hidden');
+        noOrdersDiv.classList.add('hidden');
+        
+        let html = '';
+        orders.forEach(order => {
+            const items = JSON.parse(order.items || '[]');
+            let itemsHtml = '';
+            items.forEach(item => {
+                itemsHtml += `
+                    <div class="flex justify-between text-sm py-1 border-b border-gray-100 last:border-0">
+                        <span class="text-gray-700">${item.name} × ${item.qty}</span>
+                        <span class="font-medium">₹${item.subtotal || (item.price * item.qty)}</span>
+                    </div>
+                `;
+            });
+            
+            html += `
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                    <!-- Order Header -->
+                    <div class="bg-gray-50 px-4 py-3 flex items-center justify-between border-b">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-primary">#${order.id}</span>
+                            ${getStatusBadge(order.status)}
+                        </div>
+                        <span class="text-sm text-gray-500">${formatDate(order.created_at)}</span>
+                    </div>
+                    
+                    <!-- Order Body -->
+                    <div class="p-4">
+                        <!-- Customer Details -->
+                        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div>
+                                <span class="text-gray-500">👤 नाम:</span>
+                                <span class="font-medium ml-1">${order.customer_name}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">📱 मोबाइल:</span>
+                                <span class="font-medium ml-1">${order.mobile}</span>
+                            </div>
+                            <div class="col-span-2">
+                                <span class="text-gray-500">📍 पता:</span>
+                                <span class="font-medium ml-1">${order.address}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Items -->
+                        <div class="bg-gray-50 rounded-xl p-3 mb-4">
+                            <h4 class="font-medium text-gray-800 mb-2 text-sm">📦 ऑर्डर आइटम:</h4>
+                            ${itemsHtml}
+                        </div>
+                        
+                        <!-- Total -->
+                        <div class="flex justify-between items-center pt-3 border-t">
+                            <span class="text-gray-600">कुल राशि:</span>
+                            <span class="text-xl font-bold text-primary">₹${order.total}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        ordersContainer.innerHTML = html;
+    }
+    
+    searchForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const mobile = document.getElementById('mobile-input').value.trim();
+        if (!mobile || mobile.length !== 10) {
+            alert('कृपया 10 अंकों का मोबाइल नंबर डालें');
+            return;
+        }
+        
+        // Show loading
+        searchSection.classList.add('hidden');
+        loadingState.classList.remove('hidden');
+        
+        try {
+            const response = await fetch(`/api/my-orders/${mobile}`);
+            const data = await response.json();
+            
+            loadingState.classList.add('hidden');
+            ordersSection.classList.remove('hidden');
+            
+            renderOrders(data.orders || [], mobile);
+            
+        } catch (error) {
+            console.error('My Orders Error:', error);
+            loadingState.classList.add('hidden');
+            searchSection.classList.remove('hidden');
+            alert('कुछ गड़बड़ हो गई। Error: ' + error.message);
+        }
+    });
+    
+    // Check if mobile from URL or localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const mobileFromUrl = urlParams.get('mobile');
+    const mobileFromStorage = localStorage.getItem('shivkumar_mobile');
+    
+    const autoMobile = mobileFromUrl || mobileFromStorage;
+    
+    if (autoMobile && autoMobile.length === 10) {
+        document.getElementById('mobile-input').value = autoMobile;
+        searchForm.dispatchEvent(new Event('submit'));
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,427 @@
+{% extends 'base.html' %}
+
+{% block title %}चेकआउट - शिवकुमार किराना स्टोर{% endblock %}
+
+{% block content %}
+<section class="py-8 md:py-12">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <!-- Page Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                🛒 आपका कार्ट
+            </h1>
+            <p class="text-gray-600">Your Cart - ऑर्डर पूरा करें</p>
+        </div>
+        
+        <!-- Cart & Checkout Section -->
+        <div id="checkout-section">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Cart Items -->
+                <div class="bg-white rounded-2xl shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <span class="mr-2">📦</span> कार्ट आइटम
+                    </h2>
+                    
+                    <div id="cart-items" class="space-y-4">
+                        <!-- Cart items will be loaded here -->
+                    </div>
+                    
+                    <div id="cart-empty" class="text-center py-8 hidden">
+                        <div class="text-5xl mb-4">🛒</div>
+                        <p class="text-gray-600">कार्ट खाली है</p>
+                        <a href="{{ url_for('products') }}" class="inline-block mt-4 text-primary hover:underline">
+                            सामान जोड़ें →
+                        </a>
+                    </div>
+                    
+                    <!-- Cart Total -->
+                    <div id="cart-total-section" class="border-t mt-6 pt-4">
+                        <div class="flex justify-between items-center text-xl font-bold">
+                            <span>कुल राशि:</span>
+                            <span class="text-primary" id="cart-total">₹0</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="clearCart()" 
+                            class="w-full mt-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-all-300">
+                        🗑️ कार्ट खाली करें
+                    </button>
+                </div>
+                
+                <!-- Checkout Form -->
+                <div class="bg-white rounded-2xl shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <span class="mr-2">📝</span> अपनी जानकारी भरें
+                    </h2>
+                    
+                    <form id="checkout-form" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">
+                                👤 नाम (Name) *
+                            </label>
+                            <input type="text" 
+                                   id="customer_name" 
+                                   required
+                                   placeholder="अपना नाम लिखें"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-lg">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">
+                                📱 मोबाइल नंबर (Mobile) *
+                            </label>
+                            <input type="tel" 
+                                   id="mobile" 
+                                   required
+                                   pattern="[0-9]{10}"
+                                   placeholder="10 अंकों का मोबाइल नंबर"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-lg">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">
+                                📍 पता (Address) *
+                            </label>
+                            <textarea id="address" 
+                                      required
+                                      rows="3"
+                                      placeholder="पूरा पता लिखें (गांव, मोहल्ला, लैंडमार्क)"
+                                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-lg resize-none"></textarea>
+                        </div>
+                        
+                        <!-- Payment Method Selection -->
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-3">
+                                💳 भुगतान का तरीका (Payment Method) *
+                            </label>
+                            <div class="space-y-3">
+                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-primary transition-all payment-option">
+                                    <input type="radio" name="payment_method" value="upi" class="w-5 h-5 text-primary" checked>
+                                    <div class="ml-3 flex-1">
+                                        <span class="font-medium text-gray-800">📲 UPI Payment</span>
+                                        <p class="text-sm text-gray-500">GPay, PhonePe, Paytm, etc.</p>
+                                    </div>
+                                    <span class="text-2xl">💸</span>
+                                </label>
+                                
+                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-primary transition-all payment-option">
+                                    <input type="radio" name="payment_method" value="cod" class="w-5 h-5 text-primary">
+                                    <div class="ml-3 flex-1">
+                                        <span class="font-medium text-gray-800">💵 Cash on Delivery</span>
+                                        <p class="text-sm text-gray-500">डिलीवरी पर नकद भुगतान</p>
+                                    </div>
+                                    <span class="text-2xl">🏠</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" 
+                                id="submit-btn"
+                                class="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold text-lg rounded-xl hover:opacity-90 transition-all-300 btn-press flex items-center justify-center space-x-2">
+                            <span>✅</span>
+                            <span>ऑर्डर करें (Place Order)</span>
+                        </button>
+                    </form>
+                    
+                    <p class="text-center text-gray-500 text-sm mt-4">
+                        🔒 आपकी जानकारी सुरक्षित है
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Confirmation Section (Hidden initially) -->
+        <div id="order-confirmation" class="hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 max-w-lg mx-auto">
+                <!-- Success Header -->
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-4xl">✅</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">ऑर्डर सफल!</h2>
+                    <p class="text-gray-600">Order Placed Successfully</p>
+                </div>
+                
+                <!-- Order Details -->
+                <div class="bg-amber-50 rounded-xl p-4 mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-600">ऑर्डर ID:</span>
+                        <span class="font-bold text-primary" id="confirm-order-id">#12345</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-600">कुल राशि:</span>
+                        <span class="font-bold text-xl text-primary" id="confirm-total">₹0</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">भुगतान:</span>
+                        <span class="font-medium" id="confirm-payment-method">UPI</span>
+                    </div>
+                </div>
+                
+                <!-- UPI Payment Section -->
+                <div id="upi-payment-section" class="mb-6">
+                    <h3 class="font-bold text-gray-800 mb-4 text-center">📲 UPI से भुगतान करें</h3>
+                    
+                    <!-- UPI ID -->
+                    <div class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-xl p-4 mb-4">
+                        <p class="text-sm opacity-90 mb-1">UPI ID:</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg" id="upi-id">9559126080@ybl</span>
+                            <button onclick="copyUPI()" class="px-3 py-1 bg-white/20 rounded-lg text-sm hover:bg-white/30 transition-all">
+                                📋 Copy
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Apps -->
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <a href="upi://pay?pa=neerajdatascientist56@oksbi&pn=Neeraj%20Kumar" id="gpay-link" class="flex flex-col items-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all" >
+                            <span class="text-2xl mb-1">📱</span>
+                            <span class="text-xs font-medium">GPay</span>
+                        </a>
+
+                        <a href="#" id="phonepe-link" class="flex flex-col items-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">
+                            <span class="text-2xl mb-1">💜</span>
+                            <span class="text-xs font-medium">PhonePe</span>
+                        </a>
+                        <a href="#" id="paytm-link" class="flex flex-col items-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">
+                            <span class="text-2xl mb-1">💙</span>
+                            <span class="text-xs font-medium">Paytm</span>
+                        </a>
+                    </div>
+                    
+                    <p class="text-center text-sm text-gray-500">
+                        भुगतान करने के बाद हम आपसे संपर्क करेंगे
+                    </p>
+                </div>
+                
+                <!-- COD Section -->
+                <div id="cod-payment-section" class="mb-6 hidden">
+                    <div class="bg-amber-100 rounded-xl p-4 text-center">
+                        <span class="text-4xl block mb-2">🚚</span>
+                        <h3 class="font-bold text-gray-800 mb-2">Cash on Delivery</h3>
+                        <p class="text-gray-600 text-sm">
+                            डिलीवरी के समय नकद भुगतान करें।<br>
+                            हम जल्द ही आपसे संपर्क करेंगे।
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="space-y-3">
+                    <a href="#" id="view-orders-btn"
+                       class="block w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-center rounded-xl hover:opacity-90 transition-all">
+                        📋 अपने ऑर्डर देखें
+                    </a>
+                    <a href="{{ url_for('index') }}" 
+                       class="block w-full py-3 border-2 border-gray-200 text-gray-700 font-medium text-center rounded-xl hover:bg-gray-50 transition-all">
+                        🏠 होम पेज पर जाएं
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartEmptyDiv = document.getElementById('cart-empty');
+    const cartTotalSection = document.getElementById('cart-total-section');
+    const cartTotalSpan = document.getElementById('cart-total');
+    
+    // UPI ID - Change this to your UPI ID
+    const UPI_ID = '9559126080@ybl';
+    const UPI_NAME = 'Shivkumar Kirana Store';
+    
+    function renderCart() {
+        const cart = JSON.parse(localStorage.getItem('shivkumar_cart') || '[]');
+        
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '';
+            cartEmptyDiv.classList.remove('hidden');
+            cartTotalSection.classList.add('hidden');
+            return;
+        }
+        
+        cartEmptyDiv.classList.add('hidden');
+        cartTotalSection.classList.remove('hidden');
+        
+        let html = '';
+        let total = 0;
+        
+        cart.forEach((item, index) => {
+            item.subtotal = item.qty * item.price;
+            total += item.subtotal;
+            html += `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <div class="flex-1">
+                        <h4 class="font-medium text-gray-800">${item.name}</h4>
+                        <p class="text-sm text-gray-500">₹${item.price} × ${item.qty}</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="updateQty(${index}, -1)" 
+                                    class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-all-300 font-bold">
+                                −
+                            </button>
+                            <span class="w-8 text-center font-bold">${item.qty}</span>
+                            <button onclick="updateQty(${index}, 1)" 
+                                    class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary-dark transition-all-300 font-bold">
+                                +
+                            </button>
+                        </div>
+                        <span class="font-bold text-primary w-16 text-right">₹${item.subtotal}</span>
+                    </div>
+                </div>
+            `;
+        });
+        
+        cartItemsContainer.innerHTML = html;
+        cartTotalSpan.textContent = `₹${total}`;
+        localStorage.setItem('shivkumar_cart', JSON.stringify(cart));
+    }
+    
+    function updateQty(index, change) {
+        const cart = JSON.parse(localStorage.getItem('shivkumar_cart') || '[]');
+        cart[index].qty += change;
+        
+        if (cart[index].qty <= 0) {
+            cart.splice(index, 1);
+        }
+        
+        localStorage.setItem('shivkumar_cart', JSON.stringify(cart));
+        renderCart();
+        updateCartCount();
+    }
+    
+    function clearCart() {
+        if (confirm('क्या आप वाकई कार्ट खाली करना चाहते हैं?')) {
+            localStorage.removeItem('shivkumar_cart');
+            renderCart();
+            updateCartCount();
+        }
+    }
+    
+    function copyUPI() {
+        navigator.clipboard.writeText(UPI_ID).then(() => {
+            alert('✅ UPI ID कॉपी हो गया!');
+        });
+    }
+    
+    function generateUPILink(app, amount) {
+        const baseUrl = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR`;
+        return baseUrl;
+    }
+    
+    // Payment option selection styling
+    document.querySelectorAll('.payment-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('border-primary', 'bg-amber-50');
+                opt.classList.add('border-gray-200');
+            });
+            this.classList.remove('border-gray-200');
+            this.classList.add('border-primary', 'bg-amber-50');
+        });
+    });
+    
+    // Initialize first option as selected
+    document.querySelector('.payment-option').classList.add('border-primary', 'bg-amber-50');
+    
+    // Checkout form submission
+    document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const cart = JSON.parse(localStorage.getItem('shivkumar_cart') || '[]');
+        if (cart.length === 0) {
+            alert('कृपया पहले कार्ट में सामान जोड़ें');
+            return;
+        }
+        
+        const customerName = document.getElementById('customer_name').value.trim();
+        const mobile = document.getElementById('mobile').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+        
+        if (!customerName || !mobile || !address) {
+            alert('कृपया सभी जानकारी भरें');
+            return;
+        }
+        
+        const total = cart.reduce((sum, item) => sum + (item.qty * item.price), 0);
+        
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="animate-spin">⏳</span> ऑर्डर हो रहा है...';
+        
+        try {
+            const response = await fetch('/api/place-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customer_name: customerName,
+                    mobile: mobile,
+                    address: address,
+                    items: cart,
+                    total: total,
+                    payment_method: paymentMethod
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Clear cart
+                localStorage.removeItem('shivkumar_cart');
+                updateCartCount();
+                
+                // Store customer mobile for easy order lookup
+                localStorage.setItem('shivkumar_mobile', mobile);
+                
+                // Update confirmation details
+                document.getElementById('confirm-order-id').textContent = `#${data.order_id}`;
+                document.getElementById('confirm-total').textContent = `₹${total}`;
+                document.getElementById('confirm-payment-method').textContent = paymentMethod === 'upi' ? '📲 UPI Payment' : '💵 Cash on Delivery';
+                
+                // Set view orders button link
+                document.getElementById('view-orders-btn').href = `/my-orders?mobile=${mobile}`;
+                
+                // Show/hide payment sections
+                if (paymentMethod === 'upi') {
+                    document.getElementById('upi-payment-section').classList.remove('hidden');
+                    document.getElementById('cod-payment-section').classList.add('hidden');
+                    
+                    // Set UPI links
+                    const upiLink = generateUPILink('', total);
+                    document.getElementById('gpay-link').href = upiLink;
+                    document.getElementById('phonepe-link').href = upiLink;
+                    document.getElementById('paytm-link').href = upiLink;
+                } else {
+                    document.getElementById('upi-payment-section').classList.add('hidden');
+                    document.getElementById('cod-payment-section').classList.remove('hidden');
+                }
+                
+                // Show confirmation, hide checkout
+                document.getElementById('checkout-section').classList.add('hidden');
+                document.getElementById('order-confirmation').classList.remove('hidden');
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                alert(data.message || 'कुछ गड़बड़ हो गई');
+            }
+        } catch (error) {
+            console.error('Order Error:', error);
+            alert('कुछ गड़बड़ हो गई। Error: ' + error.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>✅</span><span>ऑर्डर करें (Place Order)</span>';
+        }
+    });
+    
+    // Initialize
+    renderCart();
+</script>
+{% endblock %}

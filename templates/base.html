@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="शिवकुमार किराना स्टोर - आपकी रोज़मर्रा की जरूरतों के लिए">
+    <title>{% block title %}शिवकुमार किराना स्टोर{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <!-- Custom Tailwind Config - Dehati Style Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#c2410c',      // Terracotta Orange
+                        'primary-dark': '#9a3412', // Deep Terracotta
+                        'secondary': '#d97706',    // Turmeric Yellow
+                        'accent': '#365314',       // Olive Green
+                        'warm': '#78350f',         // Warm Brown
+                        'cream': '#fef3c7',        // Cream
+                        'saffron': '#ea580c',      // Saffron
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        /* Gradient backgrounds - Dehati Style */
+        .bg-gradient-main {
+            background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+        }
+        
+        .bg-gradient-green {
+            background: linear-gradient(135deg, #78350f 0%, #c2410c 100%);
+        }
+        
+        .bg-gradient-orange {
+            background: linear-gradient(135deg, #d97706 0%, #ea580c 100%);
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(194, 65, 12, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(194, 65, 12, 0.8); }
+        }
+        
+        .animate-pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        /* Smooth transitions */
+        .transition-all-300 {
+            transition: all 0.3s ease;
+        }
+        
+        /* Hide scrollbar for chat */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Card hover effect */
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Button press effect */
+        .btn-press:active {
+            transform: scale(0.95);
+        }
+        
+        /* Product image placeholder - Dehati Style */
+        .product-img-placeholder {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-amber-50 min-h-screen">
+    <!-- Top Bar with Free Delivery -->
+    <div class="bg-amber-800 text-white py-1 text-center text-sm">
+        <span class="animate-pulse">🚚 मुफ्त डिलीवरी | FREE DELIVERY on all orders! 📦</span>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="bg-gradient-green text-white shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-4">
+            <!-- Main Nav Row -->
+            <div class="flex items-center justify-between h-14 md:h-16 gap-2 md:gap-4">
+                <!-- Logo -->
+                <a href="{{ url_for('index') }}" class="flex items-center space-x-2 flex-shrink-0">
+                    <span class="text-2xl md:text-3xl">🛒</span>
+                    <div class="hidden sm:block">
+                        <h1 class="text-sm md:text-lg font-bold leading-tight">शिवकुमार किराना</h1>
+                        <p class="text-xs opacity-90">Shivkumar Kirana Store</p>
+                    </div>
+                </a>
+                
+                <!-- Search Bar (Center) -->
+                <form action="{{ url_for('products') }}" method="GET" class="flex-1 max-w-md mx-2">
+                    <div class="flex bg-white rounded-lg overflow-hidden shadow-md">
+                        <input type="text" 
+                               name="search" 
+                               placeholder="🔍 खोजें..." 
+                               class="flex-1 px-3 py-2 text-gray-700 text-sm outline-none w-full">
+                        <button type="submit" 
+                                class="px-3 py-2 bg-amber-500 text-white font-semibold hover:bg-amber-600 transition-all text-sm">
+                            खोजें
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-1 md:space-x-3 flex-shrink-0">
+                    <a href="{{ url_for('index') }}" class="px-2 py-1 rounded-lg hover:bg-white/20 transition-all text-xs md:text-sm hidden sm:block">
+                        🏠 होम
+                    </a>
+                    <a href="{{ url_for('products') }}" class="px-2 py-1 rounded-lg hover:bg-white/20 transition-all text-xs md:text-sm">
+                        📦 सामान
+                    </a>
+                    <a href="{{ url_for('my_orders') }}" class="px-2 py-1 rounded-lg hover:bg-white/20 transition-all text-xs md:text-sm">
+                        📋 <span class="hidden md:inline">ऑर्डर</span>
+                    </a>
+                    <a href="{{ url_for('checkout') }}" class="relative px-2 py-1 rounded-lg hover:bg-white/20 transition-all text-xs md:text-sm">
+                        🛍️ <span class="hidden md:inline">कार्ट</span>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mx-auto px-4 mt-4">
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-lg mb-2 {% if category == 'error' %}bg-red-100 text-red-700 border border-red-300{% else %}bg-green-100 text-green-700 border border-green-300{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gradient-to-b from-gray-900 to-gray-950 text-white mt-12">
+        <!-- Main Footer -->
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- About Section -->
+                <div class="text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start space-x-3 mb-4">
+                        <span class="text-4xl">🏪</span>
+                        <div>
+                            <h3 class="text-xl font-bold">शिवकुमार किराना</h3>
+                            <p class="text-amber-400 text-sm">Shivkumar Kirana Store</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4 leading-relaxed">
+                        Shivkumar Kirana Store is a modern grocery management system built by Neeraj Kumar to provide easy and fast ordering experience in village and local areas.
+                    </p>
+                    <div class="flex justify-center md:justify-start space-x-3">
+                        <a href="#" class="w-9 h-9 bg-gray-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all duration-300 text-sm">
+                            📘
+                        </a>
+                        <a href="#" class="w-9 h-9 bg-gray-800 hover:bg-pink-600 rounded-full flex items-center justify-center transition-all duration-300 text-sm">
+                            📷
+                        </a>
+                        <a href="https://wa.me/919559126080" target="_blank" class="w-9 h-9 bg-gray-800 hover:bg-green-600 rounded-full flex items-center justify-center transition-all duration-300 text-sm">
+                            💬
+                        </a>
+                        <a href="mailto:neerajdatascientist56@gmail.com" class="w-9 h-9 bg-gray-800 hover:bg-red-600 rounded-full flex items-center justify-center transition-all duration-300 text-sm">
+                            📧
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="text-center md:text-left">
+                    <h4 class="text-lg font-bold mb-4 text-amber-400">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li>
+                            <a href="{{ url_for('index') }}" class="text-gray-400 hover:text-white transition-colors flex items-center justify-center md:justify-start gap-2">
+                                🏠 Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('products') }}" class="text-gray-400 hover:text-white transition-colors flex items-center justify-center md:justify-start gap-2">
+                                🛒 Kirana Store
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/about" class="text-gray-400 hover:text-white transition-colors flex items-center justify-center md:justify-start gap-2">
+                                ℹ️ About
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/contact" class="text-gray-400 hover:text-white transition-colors flex items-center justify-center md:justify-start gap-2">
+                                � Contact
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </div>
+                
+                <!-- Contact / Customer Care -->
+                <div class="text-center md:text-left">
+                    <h4 class="text-lg font-bold mb-4 text-amber-400">Customer Care</h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-start justify-center md:justify-start gap-3 text-gray-400">
+                            <span class="text-xl mt-0.5">📞</span>
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">Customer Care</p>
+                                <a href="tel:+919559126080" class="text-white font-medium hover:text-amber-400 transition-colors">
+                                    +91-9559126080
+                                </a>
+                            </div>
+                        </li>
+                        <li class="flex items-start justify-center md:justify-start gap-3 text-gray-400">
+                            <span class="text-xl mt-0.5">📧</span>
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">Email</p>
+                                <a href="mailto:neerajdatascientist56@gmail.com" class="text-white hover:text-amber-400 transition-colors text-sm break-all">
+                                    neerajdatascientist56@gmail.com
+                                </a>
+                            </div>
+                        </li>
+                        <li class="flex items-start justify-center md:justify-start gap-3 text-gray-400">
+                            <span class="text-xl mt-0.5">📍</span>
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">Location</p>
+                                <p class="text-white">India 🇮🇳</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Developer Info -->
+                <div class="text-center md:text-left">
+                    <h4 class="text-lg font-bold mb-4 text-amber-400">Developer</h4>
+                    <div class="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-xl p-4 border border-gray-700/50 backdrop-blur">
+                        <div class="flex items-center justify-center md:justify-start gap-3 mb-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
+                                NK
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-white">Neeraj Kumar</h5>
+                                <p class="text-amber-400 text-xs">Data Scientist & Python Developer</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-xs leading-relaxed">
+                            Developed by Neeraj Kumar (Data Scientist & Python Developer)
+                        </p>
+                        <div class="flex justify-center md:justify-start gap-2 mt-4">
+                            <a href="https://wa.me/919559126080" target="_blank" 
+                               class="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded-lg text-xs font-medium transition-all hover:scale-105">
+                                💬 WhatsApp
+                            </a>
+                            <a href="mailto:neerajdatascientist56@gmail.com" 
+                               class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 rounded-lg text-xs font-medium transition-all hover:scale-105">
+                                📧 Email
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="border-t border-gray-800">
+            <div class="container mx-auto px-4 py-5">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
+                    <p class="text-gray-400 text-center md:text-left">
+                        © 2026 <span class="text-white font-medium">Neeraj Kumar</span>. All rights reserved.
+                    </p>
+                    <div class="flex items-center gap-4 text-gray-400">
+                        <span class="flex items-center gap-1">
+                            Made with <span class="text-red-500 animate-pulse">❤️</span> in India 🇮🇳
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/919559126080?text=नमस्ते! मुझे Shivkumar Kirana Store से कुछ सामान चाहिए।" 
+       target="_blank"
+       class="fixed bottom-24 right-6 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-all-300 animate-float z-50">
+        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+    </a>
+    
+    <!-- Floating Chatbot Button -->
+    <button id="chatbot-toggle" 
+            class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-amber-600 to-orange-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all-300 animate-pulse-glow z-50">
+        <span class="text-2xl" id="chatbot-icon">💬</span>
+    </button>
+    
+    <!-- Chatbot Widget -->
+    <div id="chatbot-widget" class="fixed bottom-24 right-6 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl hidden z-50 overflow-hidden">
+        <!-- Chat Header -->
+        <div class="bg-gradient-to-r from-amber-600 to-orange-600 text-white p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                        🙏
+                    </div>
+                    <div>
+                        <h3 class="font-bold">किराना सहायक</h3>
+                        <p class="text-xs opacity-90">दाम पूछें</p>
+                    </div>
+                </div>
+                <button id="chatbot-close" class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-all-300">
+                    ✕
+                </button>
+            </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div id="chat-messages" class="h-72 overflow-y-auto p-4 space-y-3 hide-scrollbar bg-gray-50">
+            <div class="flex justify-start">
+                <div class="bg-white rounded-2xl rounded-tl-none px-4 py-2 shadow-sm max-w-[80%]">
+                    <p class="text-gray-700">नमस्ते! 🙏 मैं आपकी मदद कर सकता हूं।</p>
+                    <p class="text-gray-500 text-sm mt-1">किसी भी सामान का नाम लिखें, मैं उसका दाम बताऊंगा।</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Input -->
+        <div class="p-4 border-t bg-white">
+            <form id="chat-form" class="flex space-x-2">
+                <input type="text" 
+                       id="chat-input" 
+                       placeholder="सामान का नाम लिखें..." 
+                       class="flex-1 px-4 py-3 border border-amber-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                       autocomplete="off">
+                <button type="submit" 
+                        class="px-4 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl hover:opacity-90 transition-all-300 btn-press">
+                    📤
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // Cart Management
+        let cart = JSON.parse(localStorage.getItem('shivkumar_cart') || '[]');
+        
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            const badge = document.getElementById('cart-count');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+        
+        function addToCart(id, name, price) {
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty += 1;
+                existing.subtotal = existing.qty * existing.price;
+            } else {
+                cart.push({ id, name, price, qty: 1, subtotal: price });
+            }
+            localStorage.setItem('shivkumar_cart', JSON.stringify(cart));
+            updateCartCount();
+            
+            // Show confirmation
+            showToast(`${name} कार्ट में जोड़ा गया! 🛒`);
+        }
+        
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+        
+        // Initialize cart count
+        updateCartCount();
+        
+        // Chatbot Toggle
+        const chatbotToggle = document.getElementById('chatbot-toggle');
+        const chatbotWidget = document.getElementById('chatbot-widget');
+        const chatbotClose = document.getElementById('chatbot-close');
+        const chatbotIcon = document.getElementById('chatbot-icon');
+        
+        chatbotToggle.addEventListener('click', () => {
+            chatbotWidget.classList.toggle('hidden');
+            chatbotIcon.textContent = chatbotWidget.classList.contains('hidden') ? '💬' : '✕';
+        });
+        
+        chatbotClose.addEventListener('click', () => {
+            chatbotWidget.classList.add('hidden');
+            chatbotIcon.textContent = '💬';
+        });
+        
+        // Chatbot Form
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        
+        function addMessage(content, isUser = false) {
+            const div = document.createElement('div');
+            div.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+            div.innerHTML = `
+                <div class="${isUser ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-2xl rounded-tr-none' : 'bg-white rounded-2xl rounded-tl-none shadow-sm'} px-4 py-2 max-w-[80%]">
+                    <p class="${isUser ? 'text-white' : 'text-gray-700'}" style="white-space: pre-line;">${content}</p>
+                </div>
+            `;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            addMessage(message, true);
+            chatInput.value = '';
+            
+            try {
+                const response = await fetch('/api/chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const data = await response.json();
+                addMessage(data.reply);
+            } catch (error) {
+                addMessage('कुछ गड़बड़ हो गई। कृपया दोबारा कोशिश करें।');
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

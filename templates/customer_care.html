@@ -1,0 +1,160 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<div class="container mx-auto px-4 py-8">
+    
+    <!-- Header Section -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-4xl font-bold text-gray-800">🆘 Customer Care Issues</h1>
+            <p class="text-gray-600 mt-2">Manage customer complaints and issues</p>
+        </div>
+        <div class="bg-red-100 text-red-800 px-6 py-3 rounded-lg border border-red-300">
+            <p class="text-sm font-semibold">Open Issues</p>
+            <p class="text-3xl font-bold">{{ open_count }}</p>
+        </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div class="flex flex-col md:flex-row gap-4">
+            <input type="text" 
+                   placeholder="🔍 Search by name, email, or phone..." 
+                   id="search-input"
+                   class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+            
+            <select id="status-filter" 
+                    class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                <option value="">All Status</option>
+                <option value="open">🔴 Open</option>
+                <option value="in-progress">🟡 In Progress</option>
+                <option value="resolved">🟢 Resolved</option>
+            </select>
+
+            <select id="priority-filter" 
+                    class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                <option value="">All Priority</option>
+                <option value="normal">Normal</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Issues Table -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-100 border-b">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">ID</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Customer</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Issue Type</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Priority</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Date</th>
+                        <th class="px-6 py-4 text-center text-sm font-semibold text-gray-700">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="issues-table-body">
+                    {% if issues %}
+                        {% for issue in issues %}
+                            <tr class="border-b hover:bg-gray-50 transition-all issue-row" data-id="{{ issue.id }}" data-status="{{ issue.status }}" data-priority="{{ issue.priority }}" data-search="{{ issue.name.lower() }}{{ issue.email.lower() }}{{ issue.phone }}">
+                                <td class="px-6 py-4 text-sm text-gray-700">#{{ issue.id }}</td>
+                                <td class="px-6 py-4 text-sm">
+                                    <div class="font-medium text-gray-800">{{ issue.name }}</div>
+                                    <div class="text-gray-600">{{ issue.phone }}</div>
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    {% if issue.issue_type == 'not_received' %}
+                                        📦 Order Not Received
+                                    {% elif issue.issue_type == 'quality' %}
+                                        ⚠️ Quality Issue
+                                    {% elif issue.issue_type == 'wrong_item' %}
+                                        ❌ Wrong Item
+                                    {% elif issue.issue_type == 'damaged' %}
+                                        💔 Damaged
+                                    {% elif issue.issue_type == 'payment' %}
+                                        💳 Payment
+                                    {% elif issue.issue_type == 'refund' %}
+                                        💰 Refund
+                                    {% elif issue.issue_type == 'app' %}
+                                        📱 App/Website
+                                    {% else %}
+                                        ❓ Other
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    {% if issue.priority == 'urgent' %}
+                                        <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full font-semibold">🔴 Urgent</span>
+                                    {% elif issue.priority == 'high' %}
+                                        <span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full font-semibold">🟠 High</span>
+                                    {% else %}
+                                        <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-semibold">🔵 Normal</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    {% if issue.status == 'open' %}
+                                        <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full">🔴 Open</span>
+                                    {% elif issue.status == 'in-progress' %}
+                                        <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full">🟡 In Progress</span>
+                                    {% else %}
+                                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full">🟢 Resolved</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-600">{{ issue.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
+                                <td class="px-6 py-4 text-center">
+                                    <a href="{{ url_for('admin_view_customer_care_issue', issue_id=issue.id) }}" 
+                                       class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all text-xs font-medium">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-600">
+                                <p class="text-lg">✅ No customer care issues found</p>
+                                <p class="text-sm text-gray-500 mt-2">All customers are happy!</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Search Functionality
+    const searchInput = document.getElementById('search-input');
+    const statusFilter = document.getElementById('status-filter');
+    const priorityFilter = document.getElementById('priority-filter');
+    const issueRows = document.querySelectorAll('.issue-row');
+
+    function filterIssues() {
+        const searchValue = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        const priorityValue = priorityFilter.value;
+
+        issueRows.forEach(row => {
+            const matchesSearch = row.getAttribute('data-search').includes(searchValue);
+            const matchesStatus = !statusValue || row.getAttribute('data-status') === statusValue;
+            const matchesPriority = !priorityValue || row.getAttribute('data-priority') === priorityValue;
+
+            if (matchesSearch && matchesStatus && matchesPriority) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    searchInput.addEventListener('keyup', filterIssues);
+    statusFilter.addEventListener('change', filterIssues);
+    priorityFilter.addEventListener('change', filterIssues);
+</script>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}सभी सामान - शिवकुमार किराना स्टोर{% endblock %}
+
+{% block content %}
+<section class="py-8 md:py-12">
+    <div class="container mx-auto px-4">
+        <!-- Page Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                📦 सभी सामान
+            </h1>
+            <p class="text-gray-600">All Products - शुद्ध और ताज़ा</p>
+        
+        
+        <!-- Search Bar -->
+        <form action="{{ url_for('products') }}" method="GET" class="max-w-xl mx-auto mb-8">
+            <div class="flex bg-white rounded-2xl shadow-md overflow-hidden border-2 border-gray-100">
+                <input type="text" 
+                       name="search" 
+                       value="{{ search_query }}"
+                       placeholder="🔍 सामान खोजें... (Search products)" 
+                       class="flex-1 px-6 py-4 text-gray-700 text-lg outline-none">
+                <button type="submit" 
+                        class="px-8 py-4 bg-primary text-white font-semibold hover:bg-primary-dark transition-all-300">
+                    खोजें
+                </button>
+            </div>
+        </form>
+        </div>
+        {% if search_query %}
+        <div class="text-center mb-6">
+            <p class="text-gray-600">
+                "{{ search_query }}" के लिए {{ products|length }} परिणाम मिले
+            </p>
+            <a href="{{ url_for('products') }}" class="text-primary hover:underline">
+                ✕ खोज हटाएं
+            </a>
+        </div>
+        {% endif %}
+        
+        {% if products %}
+        <!-- Products Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {% for product in products %}
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover transition-all-300 hover:shadow-2xl">
+                <!-- Product Image -->
+                <div class="h-56 md:h-72 product-img-placeholder relative overflow-hidden">
+                    {% if product.image and product.image != 'default.png' %}
+                        <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
+                             alt="{{ product.name }}"
+                             class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-8xl bg-gradient-to-br from-green-100 to-green-200">
+                            🛒
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Product Info -->
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-800 text-base md:text-lg mb-2 line-clamp-2">
+                        {{ product.name }}
+                    </h3>
+                    <div class="flex items-center justify-between">
+                        <span class="text-2xl md:text-2xl font-bold text-primary">
+                            ₹{{ product.price|int }}
+                        </span>
+                        <button onclick="addToCart({{ product.id }}, '{{ product.name }}', {{ product.price }})"
+                                class="px-3 py-2 md:px-4 md:py-2 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-dark transition-all-300 btn-press">
+                            + जोड़ें
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <div class="text-6xl mb-4">🔍</div>
+            <p class="text-gray-600 text-lg mb-2">कोई सामान नहीं मिला</p>
+            <p class="text-gray-500">No products found</p>
+            {% if search_query %}
+            <a href="{{ url_for('products') }}" 
+               class="inline-block mt-4 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-all-300">
+                सभी सामान देखें
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Floating Cart Button (Mobile) -->
+<a href="{{ url_for('checkout') }}" 
+   class="md:hidden fixed bottom-24 left-6 px-6 py-4 bg-secondary text-white rounded-full shadow-lg flex items-center space-x-2 z-40">
+    <span class="text-xl">🛒</span>
+    <span class="font-bold">कार्ट देखें</span>
+</a>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<div class="container mx-auto px-4 py-8">
+    <a href="{{ url_for('admin_contact_messages') }}" class="text-blue-600 hover:text-blue-800 font-semibold mb-6 inline-flex items-center gap-2">← Back to Messages</a>
+
+    <div class="bg-white rounded-lg shadow-md p-8">
+        <h1 class="text-2xl font-bold mb-4">Message from {{ message.name }}</h1>
+        <p class="text-sm text-gray-600 mb-4">{{ message.created_at.strftime('%d-%m-%Y %H:%M') }}</p>
+        <div class="bg-gray-50 p-4 rounded border">
+            <p class="whitespace-pre-line">{{ message.message }}</p>
+        </div>
+        {% if message.admin_reply %}
+            <div class="mt-6 bg-green-50 p-4 rounded border">
+                <h3 class="font-semibold">Your Reply</h3>
+                <p class="whitespace-pre-line">{{ message.admin_reply }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-6 bg-white rounded-lg shadow-md p-6">
+        <form id="reply-form">
+            <label class="block mb-2 font-semibold">Reply to customer</label>
+            <textarea id="reply-text" class="w-full border p-3 rounded mb-4" rows="4"></textarea>
+            <div class="flex gap-2">
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Send Reply</button>
+                <button type="button" id="delete-btn" class="px-4 py-2 bg-red-600 text-white rounded">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('reply-form');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const reply = document.getElementById('reply-text').value.trim();
+        if (!reply) return alert('Please enter a reply');
+        const res = await fetch('/api/admin/messages/{{ message.id }}/reply', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({reply})});
+        const data = await res.json();
+        if (data.success) location.reload(); else alert(data.message);
+    });
+    document.getElementById('delete-btn').addEventListener('click', async () => {
+        if (!confirm('Delete message?')) return;
+        const res = await fetch('/api/admin/messages/{{ message.id }}/delete', {method:'POST'});
+        const data = await res.json();
+        if (data.success) window.location.href = '{{ url_for("admin_contact_messages") }}'; else alert(data.message);
+    });
+</script>
+
+{% endblock %}

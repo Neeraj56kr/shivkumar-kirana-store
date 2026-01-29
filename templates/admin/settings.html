@@ -1,0 +1,65 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Settings{% endblock %}
+{% block page_title %}⚙️ दुकान सेटिंग्स (Shop Settings){% endblock %}
+
+{% block content %}
+<div class="max-w-2xl">
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-6">🕐 दुकान का समय (Shop Timings)</h3>
+        
+        <form method="POST" class="space-y-6">
+            <!-- Opening Time -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">
+                    🌅 खुलने का समय (Opening Time)
+                </label>
+                <input type="time" 
+                       name="open_time" 
+                       value="{{ settings.get('shop_open_time', '08:00') }}"
+                       class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-lg">
+            </div>
+            
+            <!-- Closing Time -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">
+                    🌙 बंद होने का समय (Closing Time)
+                </label>
+                <input type="time" 
+                       name="close_time" 
+                       value="{{ settings.get('shop_close_time', '21:00') }}"
+                       class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-lg">
+            </div>
+            
+            <!-- Phone Number -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">
+                    📱 WhatsApp नंबर
+                </label>
+                <input type="tel" 
+                       name="phone" 
+                       value="{{ settings.get('shop_phone', '9999999999') }}"
+                       placeholder="919999999999"
+                       class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none text-lg">
+                <p class="text-sm text-gray-500 mt-1">देश कोड के साथ (with country code: 91...)</p>
+            </div>
+            
+            <button type="submit" 
+                    class="w-full py-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-lg rounded-xl hover:opacity-90 transition-all">
+                💾 सेटिंग्स सेव करें (Save Settings)
+            </button>
+        </form>
+    </div>
+    
+    <!-- Preview -->
+    <div class="mt-6 bg-gradient-to-r from-amber-700 to-orange-600 rounded-2xl p-6 text-white">
+        <h4 class="font-bold mb-3">👁️ Preview (बैनर में ऐसा दिखेगा)</h4>
+        <div class="bg-white/20 rounded-xl p-4 text-center">
+            <p class="text-lg">
+                🕐 खुला: <strong>{{ settings.get('shop_open_time', '08:00') }}</strong> - 
+                <strong>{{ settings.get('shop_close_time', '21:00') }}</strong>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

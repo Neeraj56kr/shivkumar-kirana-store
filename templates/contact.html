@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width:900px; margin:auto; padding:40px 20px;">
+
+    <h1 style="text-align:center; margin-bottom:20px;"><u><b>Contact Us</b></u></h1>
+
+    <p style="text-align:center; font-size:28px; font-weight:600; color:#333; line-height:1.6;">
+        Get in touch with <b>Shivkumar Kirana Store</b>. We are always happy to help you.
+    </p>
+
+    <hr style="margin:30px 0;">
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:30px;">
+
+        <!-- Contact Info -->
+        <div>
+            <h2>📞 Contact Information</h2>
+            <p style="line-height:1.8;">
+                <b>Customer Care:</b> +91-9559126080 <br>
+                <b>Email:</b> neerajdatascientist56@gmail.com <br>
+                <b>Address:</b> Dwasi, Mahoba, up India
+            </p>
+
+            <p>
+                ⏰ <b>Shop Timing:</b><br>
+                Monday - Sunday: 7:00 AM - 9:00 PM
+            </p>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">📝 Send Us a Message if any issues arise</h2>
+
+            <form method="post" action="#" class="space-y-4">
+                <div>
+                    <input type="text" name="name" placeholder="Your Name" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all">
+                </div>
+                
+                <div>
+                    <input type="email" name="email" placeholder="Your Email" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all">
+                </div>
+                
+                <div>
+                    <textarea name="message" placeholder="Your Message" rows="5" required
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all resize-none"></textarea>
+                </div>
+
+                <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold rounded-lg hover:opacity-90 transition-all-300 btn-press">
+                    📧 Send Message
+                </button>
+            </form>
+
+            <!-- Check Reply Section -->
+            <div style="margin-top:30px; padding-top:20px; border-top:2px solid #e5e7eb;">
+                <p style="text-align:center; color:#666; margin-bottom:15px; font-size:14px;">
+                    💌 पहले से भेजे संदेश का जवाब देखें? (Sent a message before? Check your reply)
+                </p>
+                <a href="{{ url_for('check_reply') }}" class="block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg hover:opacity-90 transition-all text-center text-decoration-none">
+                    🔍 Check Your Reply
+                </a>
+            </div>
+
+            <!-- No Reply Message -->
+            {% if get_flashed_messages() %}
+                <div style="margin-top:15px; padding:12px; background-color:#e0f2fe; border-left:4px solid #0284c7; border-radius:6px;">
+                    <p style="color:#0c4a6e; font-size:14px; margin:0;">
+                        ✅ आपका संदेश भेज दिया गया है। जवाब के लिए कृपया Check Reply बटन का प्रयोग करें।
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <hr style="margin:40px 0;">
+
+    <h2>📍 Our Location</h2>
+    <p>We are located in your local area to serve you better.</p>
+
+    <!-- Optional: Google Map Embed -->
+    <div style="margin-top:20px;">
+        <iframe 
+            src="https://www.google.com/maps?q=India&output=embed"
+            width="100%" 
+            height="300" 
+            style="border:0; border-radius:10px;" 
+            allowfullscreen="" 
+            loading="lazy">
+        </iframe>
+    </div>
+
+</div>
+
+{% endblock %}
