@@ -3,31 +3,16 @@
 {% block title %}सभी सामान - शिवकुमार किराना स्टोर{% endblock %}
 
 {% block content %}
-<section class="py-8 md:py-12">
+<section class="py-6 md:py-8">
     <div class="container mx-auto px-4">
         <!-- Page Header -->
-        <div class="text-center mb-8">
+        <div class="text-center mb-6">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
                 📦 सभी सामान
             </h1>
             <p class="text-gray-600">All Products - शुद्ध और ताज़ा</p>
-        
-        
-        <!-- Search Bar -->
-        <form action="{{ url_for('products') }}" method="GET" class="max-w-xl mx-auto mb-8">
-            <div class="flex bg-white rounded-2xl shadow-md overflow-hidden border-2 border-gray-100">
-                <input type="text" 
-                       name="search" 
-                       value="{{ search_query }}"
-                       placeholder="🔍 सामान खोजें... (Search products)" 
-                       class="flex-1 px-6 py-4 text-gray-700 text-lg outline-none">
-                <button type="submit" 
-                        class="px-8 py-4 bg-primary text-white font-semibold hover:bg-primary-dark transition-all-300">
-                    खोजें
-                </button>
-            </div>
-        </form>
         </div>
+        
         {% if search_query %}
         <div class="text-center mb-6">
             <p class="text-gray-600">
@@ -41,39 +26,39 @@
         
         {% if products %}
         <!-- Products Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
             {% for product in products %}
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover transition-all-300 hover:shadow-2xl">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover transition-all-300 hover:shadow-xl">
                 <!-- Product Image -->
-                <div class="h-56 md:h-72 product-img-placeholder relative overflow-hidden">
+                <div class="h-32 sm:h-36 md:h-40 product-img-placeholder relative overflow-hidden">
                     {% if product.image and product.image != 'default.png' %}
                         {% if product.image.startswith('http') %}
                             <img src="{{ product.image }}" 
                                  alt="{{ product.name }}"
-                                 class="w-full h-full object-cover">
+                                 class="w-full h-full object-contain bg-white p-1">
                         {% else %}
                             <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
                                  alt="{{ product.name }}"
-                                 class="w-full h-full object-cover">
+                                 class="w-full h-full object-contain bg-white p-1">
                         {% endif %}
                     {% else %}
-                        <div class="w-full h-full flex items-center justify-center text-8xl bg-gradient-to-br from-green-100 to-green-200">
+                        <div class="w-full h-full flex items-center justify-center text-5xl bg-gradient-to-br from-amber-50 to-amber-100">
                             🛒
                         </div>
                     {% endif %}
                 </div>
                 
                 <!-- Product Info -->
-                <div class="p-4">
-                    <h3 class="font-semibold text-gray-800 text-base md:text-lg mb-2 line-clamp-2">
+                <div class="p-3">
+                    <h3 class="font-medium text-gray-800 text-sm md:text-base mb-2 line-clamp-1">
                         {{ product.name }}
                     </h3>
                     <div class="flex items-center justify-between">
-                        <span class="text-2xl md:text-2xl font-bold text-primary">
+                        <span class="text-lg md:text-xl font-bold text-primary">
                             ₹{{ product.price|int }}
                         </span>
                         <button onclick="addToCart({{ product.id }}, '{{ product.name }}', {{ product.price }})"
-                                class="px-3 py-2 md:px-4 md:py-2 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-dark transition-all-300 btn-press">
+                                class="px-2 py-1.5 md:px-3 md:py-2 bg-primary text-white rounded-lg text-xs md:text-sm font-semibold hover:bg-primary-dark transition-all-300 btn-press">
                             + जोड़ें
                         </button>
                     </div>
