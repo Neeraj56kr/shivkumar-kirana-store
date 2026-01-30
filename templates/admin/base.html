@@ -110,9 +110,9 @@
             <!-- Flash Messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    <div class="px-6 pt-4">
+                    <div class="px-6 pt-4" id="flash-messages-container">
                         {% for category, message in messages %}
-                            <div class="p-4 rounded-xl mb-2 {% if category == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
+                            <div class="flash-message p-4 rounded-xl mb-2 transition-all duration-500 {% if category == 'error' %}bg-red-100 text-red-700 border border-red-200{% elif category == 'warning' %}bg-yellow-100 text-yellow-700 border border-yellow-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
                                 {{ message }}
                             </div>
                         {% endfor %}
@@ -170,6 +170,20 @@
             if (e.target === e.currentTarget) {
                 e.currentTarget.classList.add('hidden');
             }
+        });
+        
+        // Auto-dismiss flash messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach((msg) => {
+                setTimeout(() => {
+                    msg.style.opacity = '0';
+                    msg.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        msg.remove();
+                    }, 500);
+                }, 5000);
+            });
         });
     </script>
     
