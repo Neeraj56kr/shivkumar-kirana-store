@@ -11,9 +11,15 @@
             <div class="flex items-center space-x-4">
                 <div class="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
                     {% if product.image and product.image != 'default.png' %}
-                        <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
-                             alt="{{ product.name }}"
-                             class="w-full h-full object-cover">
+                        {% if product.image.startswith('http') %}
+                            <img src="{{ product.image }}" 
+                                 alt="{{ product.name }}"
+                                 class="w-full h-full object-cover">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
+                                 alt="{{ product.name }}"
+                                 class="w-full h-full object-cover">
+                        {% endif %}
                     {% else %}
                         <span class="text-4xl">📦</span>
                     {% endif %}

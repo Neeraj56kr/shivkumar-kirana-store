@@ -200,9 +200,15 @@
                 <!-- Product Image -->
                 <div class="h-36 md:h-44 relative overflow-hidden bg-gradient-to-br from-amber-100 to-orange-100">
                     {% if product.image and product.image != 'default.png' %}
-                        <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
-                             alt="{{ product.name }}"
-                             class="w-full h-full object-contain group-hover:scale-110 transition-all duration-500">
+                        {% if product.image.startswith('http') %}
+                            <img src="{{ product.image }}" 
+                                 alt="{{ product.name }}"
+                                 class="w-full h-full object-contain group-hover:scale-110 transition-all duration-500">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
+                                 alt="{{ product.name }}"
+                                 class="w-full h-full object-contain group-hover:scale-110 transition-all duration-500">
+                        {% endif %}
                     {% else %}
                         <div class="w-full h-full flex items-center justify-center text-6xl group-hover:scale-110 transition-all duration-300">
                             🛒
@@ -280,9 +286,15 @@
                     <!-- Product Image -->
                     <div class="h-28 md:h-36 relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50">
                         {% if product.image and product.image != 'default.png' %}
-                            <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
-                                 alt="{{ product.name }}"
-                                 class="w-full h-full object-contain group-hover:scale-110 transition-all duration-500">
+                            {% if product.image.startswith('http') %}
+                                <img src="{{ product.image }}" 
+                                     alt="{{ product.name }}"
+                                     class="w-full h-full object-contain group-hover:scale-110 transition-all duration-500">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
+                                     alt="{{ product.name }}"
+                                     class="w-full h-full object-contain group-hover:scale-110 transition-all duration-500">
+                            {% endif %}
                         {% else %}
                             <div class="w-full h-full flex items-center justify-center text-4xl group-hover:scale-110 transition-all duration-300">
                                 🛒

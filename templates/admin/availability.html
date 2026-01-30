@@ -43,9 +43,15 @@
                 <!-- Product Image -->
                 <div class="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                     {% if product.image and product.image != 'default.png' %}
-                        <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
-                             alt="{{ product.name }}"
-                             class="w-full h-full object-cover">
+                        {% if product.image.startswith('http') %}
+                            <img src="{{ product.image }}" 
+                                 alt="{{ product.name }}"
+                                 class="w-full h-full object-cover">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
+                                 alt="{{ product.name }}"
+                                 class="w-full h-full object-cover">
+                        {% endif %}
                     {% else %}
                         <div class="w-full h-full flex items-center justify-center text-2xl bg-amber-100">🛒</div>
                     {% endif %}

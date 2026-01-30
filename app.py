@@ -12,6 +12,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_migrate import Migrate
+from cloudinary_helper import upload_image, CLOUDINARY_ENABLED
 
 from config import Config
 from models import (
@@ -342,16 +343,25 @@ def admin_add_product():
             flash('कृपया सही कीमत दर्ज करें (Enter valid price)', 'error')
             return redirect(url_for('admin_add_product'))
         
-        # Handle image upload
+        # Handle image upload - use Cloudinary if configured
         image_filename = 'default.png'
         if 'image' in request.files:
             file = request.files['image']
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                # Add timestamp to avoid conflicts
-                filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                image_filename = filename
+                # Check if Cloudinary is enabled
+                if not CLOUDINARY_ENABLED:
+                    flash('चेतावनी: Cloudinary कनेक्ट नहीं है। इमेज कुछ समय बाद डिलीट हो सकती है (Warning: Image persistence disabled)', 'warning')
+                
+                # Try Cloudinary first
+                cloudinary_url = upload_image(file)
+                if cloudinary_url:
+                    image_filename = cloudinary_url
+                else:
+                    # Fallback to local storage
+                    filename = secure_filename(file.filename)
+                    filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    image_filename = filename
         
         add_product(name, price, image_filename)
         flash(f'"{name}" सफलतापूर्वक जोड़ा गया (Product added)', 'success')
@@ -378,15 +388,25 @@ def admin_edit_product(product_id):
             flash('कृपया सही कीमत दर्ज करें (Enter valid price)', 'error')
             return redirect(url_for('admin_edit_product', product_id=product_id))
         
-        # Handle image upload
+        # Handle image upload - use Cloudinary if configured
         image_filename = None
         if 'image' in request.files:
             file = request.files['image']
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                image_filename = filename
+                # Check if Cloudinary is enabled
+                if not CLOUDINARY_ENABLED:
+                    flash('चेतावनी: Cloudinary कनेक्ट नहीं है। इमेज कुछ समय बाद डिलीट हो सकती है (Warning: Image persistence disabled)', 'warning')
+
+                # Try Cloudinary first
+                cloudinary_url = upload_image(file)
+                if cloudinary_url:
+                    image_filename = cloudinary_url
+                else:
+                    # Fallback to local storage
+                    filename = secure_filename(file.filename)
+                    filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    image_filename = filename
         
         update_product(product_id, name, price, image_filename)
         flash(f'"{name}" अपडेट हो गया (Product updated)', 'success')

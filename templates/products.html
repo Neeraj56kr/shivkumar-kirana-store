@@ -47,9 +47,15 @@
                 <!-- Product Image -->
                 <div class="h-56 md:h-72 product-img-placeholder relative overflow-hidden">
                     {% if product.image and product.image != 'default.png' %}
-                        <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
-                             alt="{{ product.name }}"
-                             class="w-full h-full object-cover">
+                        {% if product.image.startswith('http') %}
+                            <img src="{{ product.image }}" 
+                                 alt="{{ product.name }}"
+                                 class="w-full h-full object-cover">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
+                                 alt="{{ product.name }}"
+                                 class="w-full h-full object-cover">
+                        {% endif %}
                     {% else %}
                         <div class="w-full h-full flex items-center justify-center text-8xl bg-gradient-to-br from-green-100 to-green-200">
                             🛒
