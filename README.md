@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Shivkumar Kirana Store 🏪
 
 A complete full-stack web application for a village grocery shop with customer website, customer care system, chatbot, and admin panel.
@@ -74,14 +74,14 @@ pip install -r requirements.txt
 Create `.env` file in project root:
 ```env
 # Flask Configuration
-SECRET_KEY=your_random_secret_key_here
+SECRET_KEY=my_secret
 
 # Database Configuration (PostgreSQL)
-DATABASE_URL=postgresql://user:password@localhost:5432/kirana_db
+DATABASE_URL=postgresql://pass@localhost:5432/kirana_db
 
 # Default Admin Credentials
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=admin123
+ADMIN_USERNAME=neeraj
+ADMIN_PASSWORD=neeraj@123
 ```
 
 ### 5. Initialize Database
@@ -164,8 +164,8 @@ shivkumar/
 ### WhatsApp Integration
 Edit `templates/base.html`:
 ```html
-<!-- Replace 919999999999 with your WhatsApp number -->
-<a href="https://wa.me/919999999999?text=Hi...">
+<!-- Replace 919559126080 WhatsApp number -->
+<a href="https://wa.me/919559126080?text=Hi...">
 ```
 
 ### Shop Settings
@@ -179,19 +179,6 @@ Login to Admin Panel → Settings to configure:
 - Allowed formats: PNG, JPG, JPEG, GIF, WEBP
 
 ## 🚀 Deployment
-
-### Heroku
-```bash
-echo "web: gunicorn app:app" > Procfile
-git push heroku main
-```
-
-### Railway
-- Connect GitHub repo
-- Railway auto-detects Python project
-- Add PostgreSQL service
-- Set environment variables in dashboard
-
 ### Render
 - Create account on Render.com
 - Create new Web Service
@@ -239,7 +226,7 @@ For issues or questions, please contact the store admin.
 
 ---
 
-**Made with ❤️ for Shivkumar Kirana Store**
+**Made with neeraj for Shivkumar Kirana Store**
 
 **Status**: Production Ready ✅
 =======
